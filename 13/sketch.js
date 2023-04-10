@@ -1,59 +1,40 @@
-var drawMode = 1;
-
-var x = 0, y = 0;
-var stepSize = 5.0;
-var lineLength = 25;
 var letter = "U";
+let c;
 
-function setup() {
-  // use full screen size 
-  createCanvas(windowWidth, windowHeight);
+function setup(){
+  c = createCanvas(windowWidth, windowHeight);
   background(0);
-  smooth();
-  x = mouseX;
-  y = mouseY;
-  cursor(CROSS);
+  colorMode(HSB,255);
+  strokeWeight(random(1,50));
+  textFont("Arial");
+  textSize(12);
+  textAlign(CENTER, CENTER);
 }
 
-function draw() {
-  if (mouseIsPressed) {
-    var d = dist(x,y, mouseX,mouseY);
+function draw(){
+  // Add a hint of transparency to create a fading effect
+  fill(0,10);
+  rect(0, 0, width, height);
+}
 
-    if (d > stepSize) {
-      var angle = atan2(mouseY-y, mouseX-x); 
+function mouseMoved(){
+  // Add more saturation and brightness to the color
+  noStroke();
+  fill(random(0,100), 255, 200);
+  textSize((mouseX-width/2)*5+1);
+  text(letter, width/2, mouseY);
+}
 
-      push();
-      translate(x,y);
-      rotate(angle);
-      var col = color(mouseX, random(255), random(255), random(100));
-      fill(col);
-      noStroke();
-      textSize(150);
-      text(letter, 0, 0);
-      pop();
-
-      x = x + cos(angle) * stepSize;
-      y = y + sin(angle) * stepSize; 
-    } 
-    else {
-      x  = mouseX;
-      y  = mouseY; 
-    }
-  }
+function mouseDragged(){
+  // Add more saturation and brightness to the stroke color
+  stroke(random(0,255), 175, 200);
+  noFill();
+  textSize((mouseX-width/2)*5+1);
+  text(letter, width/2, mouseY);
 }
 
 function mousePressed() {
-  x = mouseX;
-  y = mouseY;
+  saveCanvas(c, "10.png", "png")
 }
 
-function keyTyped() {
-  if (key == 's' || key == 'S') save("U.png");
-}
 
-function keyPressed() {
-  if (keyCode == DELETE || key == BACKSPACE) background(255);
-  // lineLength ctrls arrowkeys up/down 
-  if (keyCode == UP_ARROW) lineLength += 5;
-  if (keyCode == DOWN_ARROW) lineLength -= 5; 
-}

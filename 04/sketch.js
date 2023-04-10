@@ -1,78 +1,48 @@
-
+// Save canvas for download
 let save;
-  // Save canvas for download
+let font;
+function preload() {
+  font = loadFont('AAHA.otf');
+}
+function setup() {
   save = createCanvas(windowWidth, windowHeight);
+  colorMode(HSB);
+  background(0);
+  textFont(font);
+  textSize(400);
+  textAlign(CENTER, CENTER);
+  frameRate(30); // reduce framerate to 10fps
 
-  function setup() {
-    createCanvas(windowWidth, windowHeight);
-    strokeWeight(20); 
-    noFill(); // Don't fill the shape
-    beginShape(); // Start drawing the shape
-    vertex(500, height - 500);
-    vertex(550, height - 500);
-    vertex(550, height - 250);
-    vertex(700, height - 250);
-    vertex(700, height - 500);
-    vertex(750, height - 500);
-    vertex(750, height - 200);
-    vertex(500, height - 200);
-    endShape(CLOSE); // End drawing the shape
-  }
-  
-  function draw() {
-    background(255, 200, 0);
-  
-    for (let i = 0; i < 10; i++) {
-      let x = random(width);
-      let y = random(height);
-      // Update the shape coordinates with mouseX and mouseY
-      let x1 = mouseX;
-      let y1 = height - 500;
-      let x2 = mouseX + 50;
-      let y2 = height - 500;
-      let x3 = mouseX + 50;
-      let y3 = mouseY + 250;
-      let x4 = mouseX + 200;
-      let y4 = mouseY + 250;
-      let x5 = mouseX + 200;
-      let y5 = height - 500;
-      let x6 = mouseX + 250;
-      let y6 = height - 500;
-      let x7 = mouseX + 250;
-      let y7 = mouseY + 300;
-      let x8 = mouseX;
-      let y8 = mouseY + 300;
-  
-      // Draw the modified shape
-      fill(0); // Set the fill color to black
-      beginShape();
-      vertex(x1, y1);
-      vertex(x2, y2);
-      vertex(x3, y3);
-      vertex(x4, y4);
-      vertex(x5, y5);
-      vertex(x6, y6);
-      vertex(x7, y7);
-      vertex(x8, y8);
-      endShape(CLOSE);
-    }
-  
-    fill(255); // Set the fill color to white
-    strokeWeight(0);
-
-for (let i = 0; i < 100; i++) {
-  rect(mouseX, mouseY - i * 50, 50); // Generate squares above and below the cursor
-  rect(mouseX - i * 50, mouseY, 50); // Generate squares to the left of the cursor
-  rect(mouseX, mouseY, 50); // Generate squares to the left of the cursor
-  rect(mouseX, mouseY - i * 50, 50); // Generate squares above and below the cursor
-  rect(mouseX - i * 50, mouseY-100, 50); // Generate squares to the left of the cursor
-  rect(mouseX - i * 50, mouseY-200, 50); // Generate squares to the left of the cursor
-
+  // Initialize Perlin noise variables
+  noiseDetail(10, 0.65);
+  noiseSeed(123);
 }
+
+function draw() {
+  // Draw the circle and fill it with HSB color using Perlin noise
+  let c1 = color(noise(frameCount / 50) * 360, 50, 80);
+  let c2 = color(noise(frameCount / 35 + 1000) * 360, 50, 80);
+  let c = lerpColor(c1, c2, mouseX / width);
+  fill(c);
+  strokeWeight(0);
+  circle(620, 350, map(noise(frameCount / 100), 0, 1, 50, windowWidth));
+
+  // Define U shape parameters
+  const uWidth = 250;
+  const uHeight = 500;
+  const uSpacing = 250;
+  const uXOffset = width / 2 - 150;
+
+  // Draw U text with rotation based on Perlin noise and mouse X position
+  push();
+  translate(width / 2, height - uHeight / 2 - 20);
+  rotate(radians(map(noise(frameCount / 50 + 2000), 0, 1, -10, 10) + map(mouseX, 0, width, -10, 10)));
+  noStroke();
+  fill(0);
+  text('U', 0, 0);
+  pop();
 }
-  
-  
 
 function mousePressed() {
-  saveCanvas(save, "10.jpg", "jpg")
+  saveCanvas(save, "10.jpg", "jpg");
 }

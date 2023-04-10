@@ -1,52 +1,61 @@
 let c;
 let ourFont;
-let profs = ["ali","diane","craig","nancy","roderick","sadie","richard"]
-console.log(profs)
-let points;
-
+let points = [];
+let letters = "U U U U U U U U U";
+let angle = 0;
 
 function preload() {
-    ourFont = loadFont('assets/inconsolata.otf');
+  ourFont = loadFont('AAHA.otf');
 }
 
 function setup() {
-    c = createCanvas(1000,1000)
-
-    
-    colorMode(HSB,255);
-
-    textSize(100)
-    textFont(ourFont);
-    
-    points = ourFont.textToPoints("GD2",100,600,600);
-
-    noStroke();
-    
-    
-    for(let i=0; i<points.length; i++) {
-        fill(random(255),255,255)
-        rect(points[i].x+random(-5,5), points[i].y+random(-5,5),random(10,60))
-        
-    }
-
-    
-
-
-    
-
+  c = createCanvas(windowWidth, windowHeight);
+  background(0);
+  colorMode(HSB, 255);
+  textFont(ourFont);
+  textSize(300);
+  textAlign(CENTER, CENTER);
+  
+  // create an array of points for each letter in the string
+  for (let i = 0; i < letters.length; i++) {
+    let letterPoints = ourFont.textToPoints(letters.charAt(i), 0, 0, 250, {
+      sampleFactor: 0.1,
+      simplifyThreshold: 0
+    });
+    points.push(letterPoints);
+  }
 }
 
 function draw() {
-
-
-
-    let ferb = map(mouseX, 0, 1000, 0, 255)
-    fill(ferb,255,255)
-    textSize(mouseY/10)
+  // clear the canvas every frame
+  background(0);
   
-    
+  // loop through each array of points and draw shapes
+  for (let i = 0; i < points.length; i++) {
+    let letterPoints = points[i];
+    let noiseVal = noise(i, frameCount * 0.01);
+    let mappedVal = map(noiseVal, 0, 1, -100, 100);
+    let x = (width / points.length) * i + mappedVal;
+    let y = height / 2;
+    push();
+    translate(x, y);
+    rotate(angle);
+    for (let j = 0; j < letterPoints.length; j++) {
+      let point = letterPoints[j];
+      let size = map(noise(j, frameCount * 0.01), 0, 1, 10, 50);
+      let hue = map(point.y, 0, height, 0, 255);
+      stroke(random(250), random(250), 255);
+      noFill();
+      strokeWeight(2);
+      ellipse(point.x, point.y, size, size);
+    }
+    pop();
+  }
+  
+  // increment angle for rotation
+  angle += 0.01;
 }
 
 function mousePressed() {
-    saveCanvas(c, "fresh-sketch", "png")
+  saveCanvas(c, "10.png", "png");
 }
